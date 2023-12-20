@@ -2,23 +2,45 @@ project:
   type: book
 
 book:
-  title: "biostat"
-  author: "Norah Jones"
+  title: "Biostatistics in Public Health"
+  author: "African Epidemiology Service"
   date: "12/19/2023"
   chapters:
     - index.qmd
-    - intro.qmd
-    - summary.qmd
-    - descriptive_stats.qmd
+    - "sessions/descriptive_stats.qmd"
+    - "sessions/hypothesis_testing.qmd"
+    - "sessions/inferential_stats.qmd"
+    - "sessions/power_sample.qmd"
+    - "sessions/non_parametric.qmd"
+    - "sessions/linear_regression.qmd"
+    - "sessions/logistic_regression.qmd"
+    - "sessions/survival_analysis.qmd"
+    - "sessions/mathematical_modeling.qmd"
+    - "sessions/implement_model.qmd"
     - references.qmd
 
+search: true
+
+execute: 
+  warning: false
+  
 bibliography: references.bib
+
+sidebar:
+    style: floating
 
 format:
   html:
-    theme: cosmo
+    theme: [flatly, theme.scss]
+    grid:
+      sidebar-width: 250px
+    #   body-width: 920px
+        margin-width: 70px
   pdf:
     documentclass: scrreprt
 
 editor: visual
+
+website:
+  page-footer: "Copyright 2023, African Union | Africa CDC | African Epidemiology Service"
 

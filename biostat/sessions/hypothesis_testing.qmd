@@ -1,0 +1,158 @@
+# Hypothesis Testing
+
+-   A hypothesis is a statement of belief about a population parameter.
+-   A hypothesis test is a statistical test that is used to determine whether there is enough evidence in a sample of data to infer that a certain condition is true for the entire population.
+
+## **Testing a Null Hypothesis**
+
+### One-sided T-test
+
+```{r}
+library(tidyverse)
+StOB <- readxl::read_xlsx('../data/Sample.xlsx')
+
+StOB
+```
+
+#### Exercise
+
+Calculate the mean, median, and standard deviation.
+
+```{r}
+mean(StOB$Age)
+median(StOB$Age)
+sd(StOB$Age)
+
+```
+
+Run a t-test with a 95% confidence interval.
+
+```{r}
+t.test(StOB$Glucose, mu =120,
+              alternative = "two.sided")
+```
+
+### Two Sided T-test
+
+**Exercise**
+
+Assuming in a neighbouring community to our **Sample** dataset, the mean glucose level is known to be 85mg/dL and we want to test if the mean glucose level of our Sample dataset is equal to this value.
+
+Run a one-sample t-test at a 5% significance level for this first with all observations and then with only observations with a glucose level\<120mg/dL. Which of the two tests is more appropriate? Explain your answer.
+
+```{r}
+glucose_over_120 <- StOB |> 
+    filter(Glucose<=120) 
+
+    t.test(glucose_over_120$Glucose, 
+           mu =120,
+           alternative = "two.sided")
+```
+
+### Analysis of Variance (ANOVA)
+
+#### **One-way ANOVA**
+
+One-way ANOVA is a statistical method to test whether the means of two or more groups are equal. This can be done by using the oneway.test() or aov()function 
+
+**Example**
+
+From the \[**Sample\]** dataset, assuming we want to compare the mean systolic blood pressure across categories of education at 5% significance level, we use the following:
+
+```{r}
+
+one.way <- aov(SBP ~ Education,data = StOB)
+
+summary(one.way)
+
+```
+
+From the output above, our focus is the F-statistic p-value of 0.535 which is not significant at 5% and so we fail to reject the null hypothesis of no differences in mean systolic blood pressures across education.
+
+#### **Post hoc tests for One-way ANOVA**
+
+The one-way ANOVA does not show exactly where differences in means are so post hoc tests may be carried out to investigate those differences. R provides post hoc tests such as **Bonferroni**, **Scheffe**, or **Sidak**, Tukeybut we will look at the **Bonferroni** test which is one of the more commonly used ones. 
+
+From our previous example, the function TukeyHSD()can be used for Tukey or pairwise.t.test(df\$y, df\$x, p.adj='bonferroni')can be used for Bonferroni method.
+
+```{r}
+pairwise.t.test(StOB$BMI, StOB$Education, p.adj='bonferroni')
+```
+
+We can also implement using TukeyHSD()
+
+```{r eval=FALSE}
+TukeyHSD(one.way, conf.level=.95)
+```
+
+[Error in TukeyHSD.aov(one.way, conf.level = 0.95) : no factors in the fitted model]{style="color:red"}
+
+**Exercise**
+
+Using the \[**Sample\]** dataset, carry out a one-way ANOVA to investigate the differences in mean cholesterol across categories of cardiovascular disease. Are these differences significant? What is the mean difference in cholesterol? Carry out a two-sample t-test on the same variables. What do you notice?
+
+#### **Two-way ANOVA**
+
+A two-way ANOVA compares the means of an outcome over two or more levels of two categorical variables. It can be used to investigate how two factors affect a response variable or whether there is an interaction effect between the two factors on the response variable.
+
+**Example**
+
+We will use the \[**Drug trial\]** dataset. Suppose as a researcher you want to investigate if there are differences in mean systolic blood pressure after the intervention, across categories of the drug used and the type of disease suffered by the patient. To carry out this investigation in R using the two-way ANOVA, the syntax and output are as follows: aov(y \~ x1 + x2, data = data frame)
+
+```{r eval = FALSE}
+two.way <- aov(SBP2 ~ Drug + Disease, data = StOB)
+
+summary(two.way)
+```
+
+[Error in eval(predvars, data, env) : object 'SBP2' not found]{style="color:red;"}
+
+From the output there is a significant association between systolic blood pressure and drug type (p\<0.001) but not with disease (p=0.069). 
+
+#### **Repeated measures ANOVA**
+
+Repeated measures ANOVA compares the means of an outcome measured repeatedly over two or more levels of categorical variables. It can be also used to examine how a response variable changes over time or under different conditions. To do a repeated measures ANOVA in RStudio:
+
+**Example**
+
+Consider the following data on reaction time by 5 individuals to 4 different drugs where the repeated measure is the reaction time. Create a dataset with this data and import it into R for analysis.
+
+|        |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
+|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|
+| Person | 1   | 1   | 1   | 1   | 2   | 2   | 2   | 2   | 3   | 3   | 3   | 3   | 4   | 4   | 4   | 4   | 5   | 5   | 5   | 5   |
+| Drug   | 1   | 2   | 3   | 4   | 1   | 2   | 3   | 4   | 1   | 2   | 3   | 4   | 1   | 2   | 3   | 4   | 1   | 2   | 3   | 4   |
+| Time   | 28  | 27  | 15  | 32  | 13  | 17  | 9   | 21  | 22  | 19  | 16  | 28  | 36  | 32  | 18  | 43  | 25  | 27  | 12  | 28  |
+
+The null hypothesis is that the reaction times do not vary significantly across the different drugs. To conduct a one-way repeated measures ANOVA, the syntax and output is: 
+
+```{r}
+library(rstatix)
+
+person <- c(1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5)
+drug   <- c(1,2,3,4,1,2,3,4,1,2,3,4,1,2,3,4,1,2,3,4)  
+time   <- c(28,27,15,32,13,17,9,21,22,19,16,28,36,32,18,43,25,27,12,28)
+StOBrt <- data.frame(person, drug, time)
+
+rt.aov <- anova_test(
+data = StOBrt, dv = time, wid = person,
+within = c(drug)
+)
+rt.aov
+
+```
+
+The p-values suggest significant differences in mean reaction time across the four drugs (at 5% significance level) for the different repeated measures by person.
+
+#### **Multivariate Analysis of Variance (MANOVA)**
+
+MANOVA is an extension of the ANOVA and is used to determine if the are significant differences in the means of two or more outcome variables across one or more independent variables. To carry out a MANOVA in RStudio the function manova() can be used as follows.
+
+```{r eval=FALSE}
+man_r <- manova(cbind(SBP2, DBP2) ~ drug, data = StOBrt )
+
+summary(man_r)
+```
+
+[Error in eval(predvars, data, env) : object 'SBP2' not found]{style="color: red;"}
+
+Test statistics and degrees of freedom are shown but our focus is on the last column that lists the p-values where we can see at 5% significance level, significant differences in both systolic and diastolic blood pressures across the different drug types used in the intervention. We can therefore conclude that the different drug types used in the intervention worked differently on both systolic and diastolic blood pressure for the 60 patients. This is an example of a one-way MANOVA because we have just one-factor variable (Drug).

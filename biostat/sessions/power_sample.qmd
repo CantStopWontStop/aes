@@ -1,0 +1,55 @@
+# Power and Sample Size
+
+## **USING EPI-INFO**
+
+-   Run EPI6 main menu
+
+-   Select EPITABLE CALCULATOR
+
+-   Select SAMPLE, then SAMPLE SIZE
+
+-   Select appropriate study design
+
+## Examples
+
+### Example I
+
+An ophthalmologist wants to know the proportion (p) of a population with defective vision.
+
+-   What is the minimum sample size if the investigator wishes to be 95% certain that the error of estimation is within ±0.05.
+
+### **Example II**
+
+The incidence of on new breast cancer among women is 150 per 100,000. We want to see if the introduction of a Vitamin dose will reduce the incidence by 20%.
+
+-   How large a sample do we need if we wish a significance level of 5% and a power of 80%?
+
+### **Example III**
+
+A study to manage women of prematurely labour (20 -- 36 wks).
+
+65% of women who use terbutaline alone and 60% who use a combination with metoprolol extend preganancy beyond 36 weeks. Results were not significant at 5% with 200 patients. How large samples per each group if:
+
+1.  Get a larger sample
+
+2.  Twice patients randomized for terbutaline alone
+
+## Study Design
+
+### **Cross-sectional study**
+
+Wedding party, 4000 guests invited. Illness because of food. Need to find the association between food and illness. 20% took pilau and the rest (80%) no pilau. So, ratio of unexposed to exposed = 80:20
+
+-   Guess that 10% case rate among unexposed and we need to detect an odds ratio of at least 2.
+
+### **Cohort study**
+
+In a vaccine trial, patients are randomly given a vaccine or a placebo. The disease among unexposed group is 10%.
+
+-   How many subjects should the study enroll to receive a two-fold reduction in risk associated with immunization.
+
+### **Case-control study**
+
+We want to compare if diarrhea is associated with bottle feeding or not using ca-co design. Mothers with infants cases and without infant cases interviewed about feeding practices. It is expected that about 40% of controls will be bottle-fed. If we want to detect a difference if bottle-feeding was associated with a two-fold increase of diarrhea (OR=2).
+
+-   How many subjects in each group?

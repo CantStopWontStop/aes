@@ -1,0 +1,130 @@
+# Descriptive Statistics
+
+```{r}
+library(tidyverse)
+
+```
+
+## Continuous outcomes
+
+### Summary statistics
+
+To generate the commonly used summary statistics in R, you can follow these steps:
+
+1.  **Using the summarize function: The summary function displays summary statistics (observations, mean standard deviation, minimum and maximum).**
+
+**NB:** The specific column (variable) for the summary statistics can be specified or R will perform the summary statistics for all the variables in the dataset as shown below.
+
+```{r}
+StOB <- readxl::read_xlsx('../data/Sample.xlsx')
+
+StOB
+```
+
+```{r}
+StOB |> summary()
+    
+
+```
+
+For a specific column, the variable can be specified. In the example of summary statistics for variable age then age needs to be specified as summary(StOB\$age), where StOB is the data frame and age is the variable.
+
+```{r}
+StOB$Age |> summary()
+```
+
+Another way is to install and library the package psych. Then you can call the function describe()to provide the summary statistics.
+
+```{r}
+StOB$Age |> psych::describe()
+```
+
+### Histogram
+
+Histograms are typically used to display the distribution of continuous data but have adaptations for discrete data. We will focus on using this for continuous data which is usually the case. Here is a brief description of how to get this done:
+
+To get a histogram, there are several ways, you may simply call the function hist(x, data, ...)from the base R or use the ggplot2 package. In the example below we called the hist() function, specifying the dataset StOB and the variables Age(Age in ywaers). The col= indicates the colour, main indicate the title and xlab represent the label for the x-axis.
+
+Example: In the histogram below we specified the colour using **col="lightyellow"** and the title \***main = "Age of Patients"** as well as the label for the x-axis using **xlab= "Age (years)"**. In ggplot2 a similar code could be used:
+
+```{r}
+hist(StOB$Age, col="green",
+     main = "Age of Patients",
+     xlab= "Age (Years)")
+```
+
+The histogram indicates that many of the patients fell between the ages of 50 and 55.
+
+**NB: before you can use this package make sure the package is installed and called.**
+
+```{r}
+ggplot(StOB) +
+ aes(x = Age) +
+ geom_histogram(bins = 7L, fill = "green") +
+ labs(x = "Age (Years)", 
+ y = "Freq", title = "Age of Patients") +
+ theme_minimal() +
+ theme(plot.title = element_text(size = 15L, 
+ face = "bold", hjust = 0.5), axis.title.y = element_text(face = "bold"), axis.title.x = element_text(face = "bold"))
+
+```
+
+### Exercise
+
+Read in the *sample* data set and create the following visualizations:
+
+1.  A histogram of the ages
+2.  A scatter plot of BMI by cholesterol level
+3.  (Bonus) A clustered bar graph of education by sex
+
+#### Answers
+
+1.  A histogram of the ages
+
+```{r}
+
+ggplot(StOB) +
+ aes(x = BMI) +
+ geom_histogram(bins = 7L, fill = "green") +
+ labs(x = "BMI", 
+ y = "Freq", title = "BMI of Patients") +
+ theme_minimal() +
+ theme(plot.title = element_text(size = 15L, 
+ face = "bold", hjust = 0.5), axis.title.y = element_text(face = "bold"), axis.title.x = element_text(face = "bold"))
+```
+
+2.  A scatter plot of BMI by cholesterol level
+
+```{r}
+
+StOB |> 
+    ggplot(aes(x = BMI, y = Cholestrol)) +
+    geom_point() +
+    theme_minimal()
+```
+
+3.  (Bonus) A clustered bar graph of education by sex
+
+```{r}
+StOB |> 
+    drop_na(Education)|> 
+    mutate(Sex = if_else(Sex == 1, "Female", "Male"),
+           Education_level = case_when(
+               Education == 1 ~ "Primary", 
+               Education == 2 ~ "Secondary",
+               Education == 3 ~ "Tertiary", 
+               Education == 4 ~ "Postgraduate"
+           ), 
+           Education_level = fct_reorder(Education_level, 
+                                         Education)) |> 
+  group_by(Education, 
+           Education_level, 
+           Sex) |>
+    summarise(Count = n()) |>
+    ggplot(aes(x = Education_level, 
+             y = Count, 
+             fill = Sex)) +
+    geom_bar(position="dodge", 
+             stat="identity") +
+    theme_minimal()
+```
