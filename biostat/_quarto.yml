@@ -1,5 +1,6 @@
 project:
   type: book
+  output-dir: "../docs"
 
 book:
   title: "Biostatistics in Public Health"
@@ -18,6 +19,8 @@ book:
     - "sessions/mathematical_modeling.qmd"
     - "sessions/implement_model.qmd"
     - references.qmd
+    
+
 
 search: true
 
@@ -32,10 +35,10 @@ sidebar:
 format:
   html:
     theme: [flatly, theme.scss]
-    grid:
-      sidebar-width: 250px
-    #   body-width: 920px
-        margin-width: 70px
+    # grid:
+    #   sidebar-width: 250px
+    #   body-width: 900px
+    #   margin-width: 70px
   pdf:
     documentclass: scrreprt
 
